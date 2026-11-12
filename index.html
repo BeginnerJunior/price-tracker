@@ -887,8 +887,42 @@ document.addEventListener('touchstart', e => {
 document.addEventListener('touchend', () => { if (touchTimer) clearTimeout(touchTimer); });
 document.addEventListener('touchmove', () => { if (touchTimer) clearTimeout(touchTimer); });
 
+// Seed data — pre-loaded items (only added once)
+const SEED_KEY = 'price-tracker-seeded-v1';
+function seedData() {
+  if (localStorage.getItem(SEED_KEY)) return;
+  const now = Date.now();
+  const seeds = [
+    { name: 'Brezze', category: 'Washing liquid', store: '7-11', unit: '1Litre', note: '', price: 62.77 },
+    { name: 'Kleenex', category: 'Tissue', store: 'Shopee', unit: '20ea', note: '', price: 223 },
+    { name: 'Scott', category: 'Tissue', store: 'Shopee', unit: '80ea', note: '', price: 464 },
+    { name: 'Shokubutsu', category: 'Shower Gel', store: 'Shopee', unit: '3ea', note: '', price: 109 },
+    { name: 'Gnite', category: 'Mg', store: 'Shopee', unit: '30ea', note: '', price: 147 },
+    { name: 'Singha Water Drinks', category: 'Water', store: 'Shopee', unit: '600ml 12ea', note: '', price: 35.1 },
+  ];
+  seeds.forEach((s, i) => {
+    const id = 'seed_' + i;
+    if (!products.find(p => p.id === id)) {
+      products.push({
+        id,
+        name: s.name,
+        category: s.category,
+        store: s.store,
+        unit: s.unit,
+        note: s.note,
+        createdAt: now - (seeds.length - i) * 1000,
+        updatedAt: now - (seeds.length - i) * 1000,
+        history: [{ price: s.price, date: now - (seeds.length - i) * 1000, note: 'ราคาเริ่มต้น' }]
+      });
+    }
+  });
+  save();
+  localStorage.setItem(SEED_KEY, '1');
+}
+
 // Init
 load();
+seedData();
 renderAll();
 </script>
 </body>
