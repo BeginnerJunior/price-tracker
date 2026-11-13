@@ -15,7 +15,6 @@
     --accent: #22d3ee;
     --green: #4ade80;
     --red: #f87171;
-    --orange: #fbbf24;
     --text: #f1f5f9;
     --text-dim: #94a3b8;
     --text-muted: #64748b;
@@ -34,10 +33,9 @@
     padding-bottom: 100px;
     overscroll-behavior-y: none;
   }
-
   .wrap { max-width: 720px; margin: 0 auto; }
 
-  /* One sticky top bar: header + search + chips (no hard-coded offsets) */
+  /* Topbar */
   .topbar {
     position: sticky; top: 0; z-index: 100;
     background: rgba(15,23,42,.92);
@@ -48,17 +46,22 @@
     padding: 14px 16px 10px;
     display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
   }
-  header h1 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
-  header .stats {
-    display: flex; gap: 6px;
-    font-size: 13px; color: var(--text-dim);
-  }
+  header h1 { font-size: 20px; font-weight: 700; }
+  header .stats { display: flex; gap: 6px; font-size: 13px; color: var(--text-dim); }
   header .stats > span + span::before { content: '·'; margin-right: 6px; color: var(--text-muted); }
 
-  /* Search */
-  .search-bar {
-    padding: 0 16px 10px;
+  /* Sync indicator */
+  #sync-status {
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 6px;
+    display: none; align-items: center; gap: 4px;
   }
+  #sync-status.connecting { display: flex; background: rgba(251,191,36,.15); color: #fbbf24; }
+  #sync-status.online    { display: flex; background: rgba(74,222,128,.15); color: var(--green); }
+  #sync-status.error     { display: flex; background: rgba(248,113,113,.15); color: var(--red); }
+
+  /* Search */
+  .search-bar { padding: 0 16px 10px; position: relative; }
   .search-bar input {
     width: 100%;
     padding: 11px 16px 11px 42px;
@@ -70,46 +73,32 @@
     outline: none;
     transition: border-color .2s;
   }
-  .search-bar { position: relative; }
   .search-bar .icon {
-    position: absolute; left: 30px; top: calc(50% - 5px);
+    position: absolute; left: 30px; top: 50%;
     transform: translateY(-50%);
-    color: var(--text-muted);
-    font-size: 16px;
-    pointer-events: none;
+    color: var(--text-muted); font-size: 16px; pointer-events: none;
   }
   .search-bar input:focus { border-color: var(--primary); }
   .search-bar input::placeholder { color: var(--text-muted); }
 
-  /* Category filter chips */
+  /* Category chips */
   .categories {
     display: flex; gap: 8px;
     padding: 0 16px 12px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
   .categories::-webkit-scrollbar { display: none; }
   .chip {
     flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: 20px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    font-size: 13px; font-weight: 500;
-    cursor: pointer;
-    transition: all .2s;
+    padding: 6px 14px; border-radius: 20px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text-dim); font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all .2s;
     -webkit-tap-highlight-color: transparent;
   }
-  .chip.active {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: #fff;
-  }
+  .chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
 
   /* Product list */
-  /* Product list: one surface, rows separated by dividers */
   .products {
     margin: 12px 16px;
     background: var(--surface);
@@ -128,61 +117,34 @@
   .product-card:hover { background: rgba(51,65,85,.35); }
   .product-header {
     flex: 1; min-width: 0;
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 12px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
   }
   .product-info { flex: 1; min-width: 0; cursor: pointer; }
-  .product-name {
-    font-size: 16px; font-weight: 600;
-    margin-bottom: 2px;
-    word-break: break-word;
-  }
+  .product-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; word-break: break-word; }
   .product-meta {
     font-size: 12px; color: var(--text-dim);
     display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   }
-  .product-meta .tag {
-    background: var(--surface-2);
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-  }
+  .product-meta .tag { background: var(--surface-2); padding: 2px 8px; border-radius: 6px; font-size: 11px; }
   .product-meta .store { color: var(--accent); }
+  .product-note { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-style: italic; }
 
-  .product-price {
-    text-align: right;
-    flex-shrink: 0;
-  }
-  .price-value {
-    font-size: 20px; font-weight: 700;
-    line-height: 1.1;
-  }
+  .product-price { text-align: right; flex-shrink: 0; }
+  .price-value { font-size: 20px; font-weight: 700; line-height: 1.1; }
   .price-value .unit { font-size: 14px; color: var(--text-dim); font-weight: 400; }
-  .price-trend {
-    font-size: 11px; font-weight: 600;
-    display: inline-flex; align-items: center; gap: 2px;
-    margin-top: 2px;
-  }
+  .price-trend { font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; }
   .price-trend.up { color: var(--red); }
   .price-trend.down { color: var(--green); }
   .price-trend.stable { color: var(--text-muted); }
 
-  .product-note { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-style: italic; }
-
   .product-actions { display: flex; gap: 4px; flex-shrink: 0; }
   .btn-icon {
-    width: 40px; height: 40px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    font-size: 16px;
-    cursor: pointer;
+    width: 40px; height: 40px; border: none; border-radius: 10px;
+    background: transparent; font-size: 16px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: background .15s, transform .1s;
     -webkit-tap-highlight-color: transparent;
   }
-  .btn-icon:hover { background: var(--surface-2); }
-  .btn-icon:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
   .btn-icon:active { transform: scale(.92); }
   .btn-edit { background: rgba(99,102,241,.18); }
   .btn-edit:hover { background: var(--primary); }
@@ -190,17 +152,10 @@
 
   /* FAB */
   .fab {
-    position: fixed;
-    bottom: 24px; right: 24px;
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    font-size: 28px;
-    box-shadow: 0 4px 20px rgba(99,102,241,.5);
-    cursor: pointer;
-    z-index: 95;
+    position: fixed; bottom: 24px; right: 24px;
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--primary); color: #fff; border: none; font-size: 28px;
+    box-shadow: 0 4px 20px rgba(99,102,241,.5); cursor: pointer; z-index: 95;
     display: flex; align-items: center; justify-content: center;
     transition: transform .2s, box-shadow .2s;
     -webkit-tap-highlight-color: transparent;
@@ -210,178 +165,88 @@
   /* Modal */
   .modal-overlay {
     position: fixed; inset: 0;
-    background: rgba(0,0,0,.6);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-    display: flex; align-items: flex-end;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s;
+    background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+    z-index: 200; display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .25s;
   }
   .modal-overlay.show { opacity: 1; pointer-events: auto; }
   .modal {
-    background: var(--surface);
-    width: 100%; max-width: 500px;
-    border-radius: 20px 20px 0 0;
-    padding: 20px 20px 24px;
+    background: var(--surface); width: 100%; max-width: 500px;
+    border-radius: 20px 20px 0 0; padding: 20px 20px 24px;
     transform: translateY(100%);
     transition: transform .3s cubic-bezier(.32,.72,0,1);
-    max-height: 90vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   .modal-overlay.show .modal { transform: translateY(0); }
-  .modal-handle {
-    width: 40px; height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 16px;
-  }
-  .modal-title {
-    font-size: 18px; font-weight: 700;
-    margin-bottom: 16px;
-  }
+  .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
 
   /* Form */
   .form-group { margin-bottom: 14px; }
-  .form-group label {
-    display: block;
-    font-size: 13px; font-weight: 600;
-    color: var(--text-dim);
-    margin-bottom: 6px;
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-dim); margin-bottom: 6px; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 11px 14px;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-size: 15px; outline: none; transition: border-color .2s; font-family: inherit;
   }
-  .form-group input, .form-group textarea, .form-group select {
-    width: 100%;
-    padding: 11px 14px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-size: 15px;
-    outline: none;
-    transition: border-color .2s;
-    font-family: inherit;
-  }
-  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
-    border-color: var(--primary);
-  }
-  .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+  .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+  .form-group input::placeholder { color: var(--text-muted); }
   .form-row { display: flex; gap: 10px; }
   .form-row .form-group { flex: 1; }
-
-  .form-actions {
-    display: flex; gap: 10px;
-    margin-top: 20px;
-  }
+  .form-actions { display: flex; gap: 10px; margin-top: 20px; }
   .btn {
-    flex: 1;
-    padding: 13px;
-    border: none;
-    border-radius: 12px;
-    font-size: 15px; font-weight: 700;
-    cursor: pointer;
-    transition: transform .1s, opacity .2s;
-    -webkit-tap-highlight-color: transparent;
+    flex: 1; padding: 13px; border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: transform .1s, opacity .2s; -webkit-tap-highlight-color: transparent;
   }
   .btn:active { transform: scale(.97); }
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-secondary { background: var(--surface-2); color: var(--text-dim); }
 
-  /* History view */
-  .history-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 14px;
-  }
+  /* History */
+  .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .history-header h3 { font-size: 16px; }
-  .history-header .current-price {
-    font-size: 14px; color: var(--accent); font-weight: 600;
-  }
-  .history-list {
-    position: relative;
-    padding-left: 20px;
-  }
+  .history-header .current-price { font-size: 14px; color: var(--accent); font-weight: 600; }
+  .history-list { position: relative; padding-left: 20px; }
   .history-list::before {
-    content: '';
-    position: absolute;
-    left: 5px; top: 0; bottom: 0;
-    width: 2px;
-    background: var(--border);
+    content: ''; position: absolute; left: 5px; top: 0; bottom: 0; width: 2px; background: var(--border);
   }
-  .history-item {
-    position: relative;
-    padding: 0 0 16px 20px;
-  }
+  .history-item { position: relative; padding: 0 0 16px 20px; }
   .history-item::before {
-    content: '';
-    position: absolute;
-    left: -19px; top: 4px;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--surface);
-    border: 2px solid var(--primary);
+    content: ''; position: absolute; left: -19px; top: 4px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--surface); border: 2px solid var(--primary);
   }
-  .history-item:first-child::before {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-  .history-item .h-price {
-    font-size: 16px; font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .history-item .h-change {
-    font-size: 12px; font-weight: 600;
-    padding: 1px 7px;
-    border-radius: 6px;
-  }
+  .history-item:first-child::before { background: var(--accent); border-color: var(--accent); }
+  .history-item .h-price { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .history-item .h-change { font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 6px; }
   .h-change.up { background: rgba(248,113,113,.15); color: var(--red); }
   .h-change.down { background: rgba(74,222,128,.15); color: var(--green); }
   .h-change.new { background: rgba(34,211,238,.15); color: var(--accent); }
-  .history-item .h-date {
-    font-size: 12px; color: var(--text-muted);
-    margin-top: 3px;
-  }
-  .history-item .h-note {
-    font-size: 12px; color: var(--text-dim);
-    margin-top: 3px;
-    font-style: italic;
-  }
+  .history-item .h-date { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .history-item .h-note { font-size: 12px; color: var(--text-dim); margin-top: 3px; font-style: italic; }
 
-  /* Empty state */
-  .empty {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
-  }
+  /* Empty */
+  .empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
   .empty .emoji { font-size: 48px; margin-bottom: 12px; }
   .empty p { font-size: 15px; }
 
-  /* Number pad helper */
-  input[type="number"] { -webkit-appearance: none; }
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-  /* Confirm delete inline */
+  /* Confirm delete */
   .confirm-delete {
-    display: none;
-    flex-basis: 100%;
-    padding: 12px;
-    background: rgba(248,113,113,.1);
-    border: 1px solid rgba(248,113,113,.3);
-    border-radius: 10px;
-    text-align: center;
+    display: none; flex-basis: 100%;
+    padding: 12px; background: rgba(248,113,113,.1);
+    border: 1px solid rgba(248,113,113,.3); border-radius: 10px; text-align: center;
   }
   .confirm-delete.show { display: block; }
   .confirm-delete p { font-size: 13px; color: var(--text-dim); margin-bottom: 10px; }
   .confirm-delete .confirm-actions { display: flex; gap: 8px; }
-  .confirm-delete button {
-    flex: 1; padding: 9px;
-    border: none; border-radius: 8px;
-    font-size: 13px; font-weight: 600;
-    cursor: pointer;
-  }
+  .confirm-delete button { flex: 1; padding: 9px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
   .confirm-delete .yes { background: var(--red); color: #fff; }
   .confirm-delete .no { background: var(--surface-2); color: var(--text-dim); }
+
+  input[type="number"] { -webkit-appearance: none; }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 </style>
 </head>
 <body>
@@ -389,28 +254,28 @@
 <div class="topbar"><div class="wrap">
   <header>
     <h1>Price Tracker</h1>
-    <div class="stats">
-      <span><span id="stat-count">0</span> รายการ</span>
-      <span><span id="stat-cats">0</span> หมวด</span>
-      <span><span id="stat-edits">0</span> แก้ราคา</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="sync-status" class="connecting">⏳ กำลังเชื่อมต่อ...</span>
+      <div class="stats">
+        <span><span id="stat-count">0</span> รายการ</span>
+        <span><span id="stat-cats">0</span> หมวด</span>
+        <span><span id="stat-edits">0</span> แก้ราคา</span>
+      </div>
     </div>
   </header>
-
   <div class="search-bar">
     <span class="icon">🔍</span>
-    <input type="text" id="search" placeholder="ค้นหาสินค้า..." autocomplete="off" aria-label="ค้นหาสินค้า">
+    <input type="text" id="search" placeholder="ค้นหาสินค้า..." autocomplete="off" aria-label="ค้นหา">
   </div>
-
   <div class="categories" id="categories"></div>
 </div></div>
 
 <div class="wrap">
-<div class="products" id="products"></div>
-
-<div class="empty" id="empty" style="display:none">
-  <div class="emoji">📭</div>
-  <p>ยังไม่มีสินค้า<br>กดปุ่ม + เพื่อเพิ่มรายการใหม่</p>
-</div>
+  <div class="products" id="products"></div>
+  <div class="empty" id="empty" style="display:none">
+    <div class="emoji">📭</div>
+    <p>ยังไม่มีสินค้า<br>กดปุ่ม + เพื่อเพิ่มรายการใหม่</p>
+  </div>
 </div>
 
 <button class="fab" onclick="openAddModal()" aria-label="เพิ่มสินค้า">+</button>
@@ -468,7 +333,7 @@
       <input type="number" id="pm-new-price" placeholder="0" inputmode="decimal" step="0.01">
     </div>
     <div class="form-group">
-      <label>หมายเหตุ (เผือ/ไม่บังคับ)</label>
+      <label>หมายเหตุ (ไม่บังคับ)</label>
       <input type="text" id="pm-note" placeholder="เช่น ลดราคา, ขึ้นราคา, โปร" autocomplete="off">
     </div>
     <div class="form-actions">
@@ -494,43 +359,101 @@
   </div>
 </div>
 
+<!-- Firebase SDK (compat — works in plain HTML without bundler) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script>
-const STORE_KEY = 'price-tracker-v1';
+// ── Firebase config ──────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDSEQgJNDOyNoYvENoMeJYC2jlc9zV2nDs",
+  authDomain: "price-tracker-cf068.firebaseapp.com",
+  databaseURL: "https://price-tracker-cf068-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "price-tracker-cf068",
+  storageBucket: "price-tracker-cf068.firebasestorage.app",
+  messagingSenderId: "22794024529",
+  appId: "1:22794024529:web:897e0b3f0d30e2f9aeea70"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const productsRef = db.ref('products');
+
+// ── State ────────────────────────────────────────────────────────────────────
 let products = [];
 let activeCategory = 'all';
 let searchTerm = '';
 let editingId = null;
 let priceEditingId = null;
 
-// ---- Storage ----
-function load() {
-  try {
-    products = JSON.parse(localStorage.getItem(STORE_KEY)) || [];
-  } catch(e) { products = []; }
-}
-function save() {
-  localStorage.setItem(STORE_KEY, JSON.stringify(products));
+// ── Sync status indicator ────────────────────────────────────────────────────
+function setSyncStatus(state, text) {
+  const el = document.getElementById('sync-status');
+  el.className = state;
+  el.textContent = text;
 }
 
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+// ── Firebase real-time listener ──────────────────────────────────────────────
+db.ref('.info/connected').on('value', snap => {
+  if (snap.val() === true) {
+    setSyncStatus('online', '🟢 เชื่อมต่อแล้ว');
+    // hide after 3s once connected
+    setTimeout(() => {
+      const el = document.getElementById('sync-status');
+      if (el.classList.contains('online')) el.className = '';
+    }, 3000);
+  } else {
+    setSyncStatus('connecting', '⏳ กำลังเชื่อมต่อ...');
+  }
+});
+
+productsRef.on('value', snap => {
+  const data = snap.val();
+  if (data) {
+    // Convert Firebase object to sorted array
+    products = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+  } else {
+    products = [];
+    // Seed initial data if DB is empty
+    seedData();
+  }
+  renderAll();
+}, err => {
+  setSyncStatus('error', '🔴 เชื่อมต่อล้มเหลว');
+  console.error('Firebase error:', err);
+});
+
+// ── Seed data (runs only when DB is completely empty) ────────────────────────
+function seedData() {
+  const now = Date.now();
+  const seeds = [
+    { name: 'Brezze',              category: 'Washing liquid', store: '7-11',   unit: '1Litre',    price: 62.77 },
+    { name: 'Kleenex',             category: 'Tissue',         store: 'Shopee', unit: '20ea',      price: 223   },
+    { name: 'Scott',               category: 'Tissue',         store: 'Shopee', unit: '80ea',      price: 464   },
+    { name: 'Shokubutsu',          category: 'Shower Gel',     store: 'Shopee', unit: '3ea',       price: 109   },
+    { name: 'Gnite',               category: 'Mg',             store: 'Shopee', unit: '30ea',      price: 147   },
+    { name: 'Singha Water Drinks', category: 'Water',          store: 'Shopee', unit: '600ml 12ea',price: 35.1  },
+  ];
+  const batch = {};
+  seeds.forEach((s, i) => {
+    const id = 'seed_' + i;
+    batch[id] = {
+      name: s.name, category: s.category, store: s.store, unit: s.unit, note: '',
+      createdAt: now - (seeds.length - i) * 1000,
+      updatedAt: now - (seeds.length - i) * 1000,
+      history: { 0: { price: s.price, date: now - (seeds.length - i) * 1000, note: 'ราคาเริ่มต้น' } }
+    };
+  });
+  productsRef.set(batch);
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
 function fmtPrice(n) {
   const num = parseFloat(n);
   if (isNaN(num)) return '0';
   return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-}
-
-function fmtDate(ts) {
-  const d = new Date(ts);
-  const now = new Date();
-  const opts = { hour: '2-digit', minute: '2-digit' };
-  if (d.toDateString() === now.toDateString()) {
-    return 'วันนี้ ' + d.toLocaleTimeString('th-TH', opts);
-  }
-  const diff = (now - d) / 86400000;
-  if (diff < 2) return 'เมื่อวาน ' + d.toLocaleTimeString('th-TH', opts);
-  if (diff < 7) return Math.floor(diff) + ' วันที่แล้ว';
-  return d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 function fmtDateFull(ts) {
@@ -539,10 +462,39 @@ function fmtDateFull(ts) {
     ' ' + d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 }
 
-// ---- Render ----
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// History is stored as Firebase object {0:{...}, 1:{...}} or plain array
+function getHistory(p) {
+  if (!p.history) return [];
+  if (Array.isArray(p.history)) return p.history.filter(Boolean);
+  return Object.values(p.history);
+}
+
+function getLatestPrice(p) {
+  const h = getHistory(p);
+  if (h.length === 0) return p.price || 0;
+  return h[h.length - 1].price;
+}
+
+function getPriceTrend(p) {
+  const h = getHistory(p);
+  if (h.length < 2) return { dir: 'stable', diff: 0, pct: 0 };
+  const latest = h[h.length - 1].price;
+  const prev = h[h.length - 2].price;
+  const diff = latest - prev;
+  const pct = prev > 0 ? (diff / prev) * 100 : 0;
+  if (diff > 0) return { dir: 'up', diff, pct };
+  if (diff < 0) return { dir: 'down', diff, pct };
+  return { dir: 'stable', diff: 0, pct: 0 };
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
 function getCategories() {
-  const cats = [...new Set(products.map(p => p.category || 'อื่นๆ'))].sort();
-  return cats;
+  return [...new Set(products.map(p => p.category || 'อื่นๆ'))].sort();
 }
 
 function getFiltered() {
@@ -557,30 +509,14 @@ function getFiltered() {
   }).sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
 }
 
-function getLatestPrice(p) {
-  if (!p.history || p.history.length === 0) return p.price;
-  return p.history[p.history.length - 1].price;
-}
-
-function getPriceTrend(p) {
-  if (!p.history || p.history.length < 2) return { dir: 'stable', diff: 0, pct: 0 };
-  const latest = p.history[p.history.length - 1].price;
-  const prev = p.history[p.history.length - 2].price;
-  const diff = latest - prev;
-  const pct = prev > 0 ? (diff / prev) * 100 : 0;
-  if (diff > 0) return { dir: 'up', diff, pct };
-  if (diff < 0) return { dir: 'down', diff, pct };
-  return { dir: 'stable', diff: 0, pct: 0 };
-}
-
 function renderCategories() {
   const cats = getCategories();
-  const container = document.getElementById('categories');
-  let html = '<div class="chip ' + (activeCategory === 'all' ? 'active' : '') + '" onclick="setCategory(\'all\')">ทั้งหมด</div>';
+  let html = `<div class="chip ${activeCategory === 'all' ? 'active' : ''}" onclick="setCategory('all')">ทั้งหมด</div>`;
   cats.forEach(c => {
-    html += '<div class="chip ' + (activeCategory === c ? 'active' : '') + '" onclick="setCategory(\'' + c.replace(/'/g, "\\'") + '\')">' + escapeHtml(c) + '</div>';
+    html += `<div class="chip ${activeCategory === c ? 'active' : ''}" onclick="setCategory('${c.replace(/'/g,"\\'")}')">
+      ${escapeHtml(c)}</div>`;
   });
-  container.innerHTML = html;
+  document.getElementById('categories').innerHTML = html;
 }
 
 function renderProducts() {
@@ -588,11 +524,7 @@ function renderProducts() {
   const container = document.getElementById('products');
   const empty = document.getElementById('empty');
 
-  if (filtered.length === 0) {
-    container.innerHTML = '';
-    empty.style.display = 'block';
-    return;
-  }
+  if (filtered.length === 0) { container.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
 
   container.innerHTML = filtered.map(p => {
@@ -601,24 +533,24 @@ function renderProducts() {
     const cat = p.category || 'อื่นๆ';
     let trendHtml = '';
     if (trend.dir === 'up') {
-      trendHtml = '<div class="price-trend up">▲ +' + fmtPrice(trend.diff) + ' (' + trend.pct.toFixed(1) + '%)</div>';
+      trendHtml = `<div class="price-trend up">▲ +${fmtPrice(trend.diff)} (${trend.pct.toFixed(1)}%)</div>`;
     } else if (trend.dir === 'down') {
-      trendHtml = '<div class="price-trend down">▼ -' + fmtPrice(Math.abs(trend.diff)) + ' (' + Math.abs(trend.pct).toFixed(1) + '%)</div>';
-    } else if (p.history && p.history.length > 0) {
-      trendHtml = '<div class="price-trend stable">— คงที่</div>';
+      trendHtml = `<div class="price-trend down">▼ -${fmtPrice(Math.abs(trend.diff))} (${Math.abs(trend.pct).toFixed(1)}%)</div>`;
+    } else if (getHistory(p).length > 0) {
+      trendHtml = `<div class="price-trend stable">— คงที่</div>`;
     }
 
     return `
       <div class="product-card">
         <div class="product-header">
-          <div class="product-info" onclick="openEditModal('${p.id}')" title="แก้ไขสินค้า">
+          <div class="product-info" onclick="openEditModal('${p.id}')">
             <div class="product-name">${escapeHtml(p.name)}</div>
             <div class="product-meta">
               <span class="tag">${escapeHtml(cat)}</span>
-              ${p.store ? '<span class="store">' + escapeHtml(p.store) + '</span>' : ''}
-              ${p.unit ? '<span>· ' + escapeHtml(p.unit) + '</span>' : ''}
+              ${p.store ? `<span class="store">${escapeHtml(p.store)}</span>` : ''}
+              ${p.unit ? `<span>· ${escapeHtml(p.unit)}</span>` : ''}
             </div>
-            ${p.note ? '<div class="product-note">' + escapeHtml(p.note) + '</div>' : ''}
+            ${p.note ? `<div class="product-note">${escapeHtml(p.note)}</div>` : ''}
           </div>
           <div class="product-price">
             <div class="price-value">${fmtPrice(price)}<span class="unit"> ฿</span></div>
@@ -626,9 +558,9 @@ function renderProducts() {
           </div>
         </div>
         <div class="product-actions">
-          <button class="btn-icon btn-edit" onclick="openPriceModal('${p.id}')" title="แก้ราคา" aria-label="แก้ราคา">✏️</button>
-          <button class="btn-icon btn-history" onclick="openHistory('${p.id}')" title="ประวัติ" aria-label="ประวัติราคา">📊</button>
-          <button class="btn-icon btn-delete" onclick="toggleDelete('${p.id}')" title="ลบ" aria-label="ลบ">🗑️</button>
+          <button class="btn-icon btn-edit" onclick="openPriceModal('${p.id}')" aria-label="แก้ราคา">✏️</button>
+          <button class="btn-icon" onclick="openHistory('${p.id}')" aria-label="ประวัติ">📊</button>
+          <button class="btn-icon btn-delete" onclick="toggleDelete('${p.id}')" aria-label="ลบ">🗑️</button>
         </div>
         <div class="confirm-delete" id="del-${p.id}">
           <p>ต้องการลบ "${escapeHtml(p.name)}" หรือไม่?</p>
@@ -637,16 +569,20 @@ function renderProducts() {
             <button class="yes" onclick="deleteProduct('${p.id}')">ลบ</button>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
 function renderStats() {
   document.getElementById('stat-count').textContent = products.length;
   document.getElementById('stat-cats').textContent = getCategories().length;
-  const totalEdits = products.reduce((s, p) => s + (p.history ? p.history.length - 1 : 0), 0);
+  const totalEdits = products.reduce((s, p) => s + Math.max(0, getHistory(p).length - 1), 0);
   document.getElementById('stat-edits').textContent = totalEdits;
+}
+
+function updateCatList() {
+  document.getElementById('cat-list').innerHTML =
+    getCategories().map(c => `<option value="${escapeHtml(c)}">`).join('');
 }
 
 function renderAll() {
@@ -656,38 +592,18 @@ function renderAll() {
   updateCatList();
 }
 
-function escapeHtml(s) {
-  if (!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-function updateCatList() {
-  const cats = getCategories();
-  document.getElementById('cat-list').innerHTML = cats.map(c => `<option value="${escapeHtml(c)}">`).join('');
-}
-
-// ---- Actions ----
-function setCategory(cat) {
-  activeCategory = cat;
-  renderCategories();
-  renderProducts();
-}
+// ── Actions ──────────────────────────────────────────────────────────────────
+function setCategory(cat) { activeCategory = cat; renderCategories(); renderProducts(); }
 
 document.getElementById('search').addEventListener('input', e => {
   searchTerm = e.target.value.toLowerCase().trim();
   renderProducts();
 });
 
-// Add/Edit modal
 function openAddModal() {
   editingId = null;
   document.getElementById('modal-title').textContent = 'เพิ่มสินค้าใหม่';
-  document.getElementById('p-name').value = '';
-  document.getElementById('p-category').value = '';
-  document.getElementById('p-price').value = '';
-  document.getElementById('p-store').value = '';
-  document.getElementById('p-unit').value = '';
-  document.getElementById('p-note').value = '';
+  ['p-name','p-category','p-price','p-store','p-unit','p-note'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('btn-save').textContent = 'บันทึก';
   document.getElementById('modal-overlay').classList.add('show');
   setTimeout(() => document.getElementById('p-name').focus(), 300);
@@ -709,61 +625,46 @@ function openEditModal(id) {
   setTimeout(() => document.getElementById('p-name').focus(), 300);
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('show');
-  editingId = null;
-}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); editingId = null; }
 
 function saveProduct() {
-  const name = document.getElementById('p-name').value.trim();
+  const name     = document.getElementById('p-name').value.trim();
   const category = document.getElementById('p-category').value.trim() || 'อื่นๆ';
-  const price = parseFloat(document.getElementById('p-price').value);
-  const store = document.getElementById('p-store').value.trim();
-  const unit = document.getElementById('p-unit').value.trim();
-  const note = document.getElementById('p-note').value.trim();
+  const price    = parseFloat(document.getElementById('p-price').value);
+  const store    = document.getElementById('p-store').value.trim();
+  const unit     = document.getElementById('p-unit').value.trim();
+  const note     = document.getElementById('p-note').value.trim();
 
-  if (!name) { document.getElementById('p-name').focus(); return; }
-  if (isNaN(price) || price < 0) { document.getElementById('p-price').focus(); return; }
+  if (!name)                        { document.getElementById('p-name').focus();  return; }
+  if (isNaN(price) || price < 0)   { document.getElementById('p-price').focus(); return; }
 
   const now = Date.now();
 
   if (editingId) {
     const p = products.find(x => x.id === editingId);
-    if (p) {
-      const oldPrice = getLatestPrice(p);
-      p.name = name;
-      p.category = category;
-      p.store = store;
-      p.unit = unit;
-      p.note = note;
-      p.updatedAt = now;
-      // If price changed, add to history
-      if (price !== oldPrice) {
-        if (!p.history) p.history = [];
-        p.history.push({ price, date: now, note: note || '' });
-      }
+    if (!p) return;
+    const ref = productsRef.child(editingId);
+    const oldPrice = getLatestPrice(p);
+    const updates = { name, category, store, unit, note, updatedAt: now };
+    if (price !== oldPrice) {
+      // Push new history entry
+      const newHistEntry = { price, date: now, note: note || '' };
+      ref.child('history').push(newHistEntry);
     }
+    ref.update(updates);
   } else {
     const id = uid();
-    products.push({
-      id,
-      name,
-      category,
-      store,
-      unit,
-      note,
-      createdAt: now,
-      updatedAt: now,
-      history: [{ price, date: now, note: note || 'ราคาเริ่มต้น' }]
-    });
+    const newProduct = {
+      name, category, store, unit, note,
+      createdAt: now, updatedAt: now,
+      history: { 0: { price, date: now, note: 'ราคาเริ่มต้น' } }
+    };
+    productsRef.child(id).set(newProduct);
   }
 
-  save();
   closeModal();
-  renderAll();
 }
 
-// Price edit modal
 function openPriceModal(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
@@ -776,29 +677,19 @@ function openPriceModal(id) {
   setTimeout(() => document.getElementById('pm-new-price').focus(), 300);
 }
 
-function closePriceModal() {
-  document.getElementById('price-modal').classList.remove('show');
-  priceEditingId = null;
-}
+function closePriceModal() { document.getElementById('price-modal').classList.remove('show'); priceEditingId = null; }
 
 function saveNewPrice() {
-  const p = products.find(x => x.id === priceEditingId);
-  if (!p) return;
   const newPrice = parseFloat(document.getElementById('pm-new-price').value);
-  const note = document.getElementById('pm-note').value.trim();
-
+  const note     = document.getElementById('pm-note').value.trim();
   if (isNaN(newPrice) || newPrice < 0) { document.getElementById('pm-new-price').focus(); return; }
 
-  if (!p.history) p.history = [];
-  p.history.push({ price: newPrice, date: Date.now(), note });
-  p.updatedAt = Date.now();
-
-  save();
+  const now = Date.now();
+  productsRef.child(priceEditingId).child('history').push({ price: newPrice, date: now, note });
+  productsRef.child(priceEditingId).update({ updatedAt: now });
   closePriceModal();
-  renderAll();
 }
 
-// History modal
 function openHistory(id) {
   const p = products.find(x => x.id === id);
   if (!p) return;
@@ -806,124 +697,59 @@ function openHistory(id) {
     p.name + (p.store ? ' · ' + p.store : '') + (p.unit ? ' · ' + p.unit : '');
   document.getElementById('hm-current').textContent = fmtPrice(getLatestPrice(p)) + ' ฿';
 
+  const hist = getHistory(p);
   const list = document.getElementById('history-list');
-  if (!p.history || p.history.length === 0) {
+  if (hist.length === 0) {
     list.innerHTML = '<div style="color:var(--text-muted);text-align:center;padding:20px">ไม่มีประวัติ</div>';
   } else {
-    const reversed = [...p.history].reverse();
+    const reversed = [...hist].reverse();
     list.innerHTML = reversed.map((h, i) => {
-      const idx = p.history.length - 1 - i;
+      const idx = hist.length - 1 - i;
       let changeHtml = '';
       if (idx === 0) {
         changeHtml = '<span class="h-change new">เริ่มต้น</span>';
       } else {
-        const prev = p.history[idx - 1].price;
-        const diff = h.price - prev;
-        if (diff > 0) {
-          changeHtml = '<span class="h-change up">▲ +' + fmtPrice(diff) + '</span>';
-        } else if (diff < 0) {
-          changeHtml = '<span class="h-change down">▼ ' + fmtPrice(diff) + '</span>';
-        } else {
-          changeHtml = '<span class="h-change">—</span>';
-        }
+        const diff = h.price - hist[idx - 1].price;
+        if (diff > 0)      changeHtml = `<span class="h-change up">▲ +${fmtPrice(diff)}</span>`;
+        else if (diff < 0) changeHtml = `<span class="h-change down">▼ ${fmtPrice(diff)}</span>`;
+        else               changeHtml = `<span class="h-change">—</span>`;
       }
       return `
         <div class="history-item">
           <div class="h-price">${fmtPrice(h.price)} ฿ ${changeHtml}</div>
           <div class="h-date">${fmtDateFull(h.date)}</div>
-          ${h.note ? '<div class="h-note">💬 ' + escapeHtml(h.note) + '</div>' : ''}
-        </div>
-      `;
+          ${h.note ? `<div class="h-note">💬 ${escapeHtml(h.note)}</div>` : ''}
+        </div>`;
     }).join('');
   }
   document.getElementById('history-modal').classList.add('show');
 }
 
-function closeHistoryModal() {
-  document.getElementById('history-modal').classList.remove('show');
-}
+function closeHistoryModal() { document.getElementById('history-modal').classList.remove('show'); }
 
-// Delete
 function toggleDelete(id) {
   const el = document.getElementById('del-' + id);
   if (el) el.classList.toggle('show');
 }
 
 function deleteProduct(id) {
-  products = products.filter(x => x.id !== id);
-  save();
-  renderAll();
+  productsRef.child(id).remove();
 }
 
-// Close modals on overlay click
+// Close modals on overlay click / Escape
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', e => {
     if (e.target === overlay) {
       overlay.classList.remove('show');
-      editingId = null;
-      priceEditingId = null;
+      editingId = null; priceEditingId = null;
     }
   });
 });
-
-// Close on Escape
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     document.querySelectorAll('.modal-overlay.show').forEach(m => m.classList.remove('show'));
   }
 });
-
-// Long-press product card to edit
-let touchTimer = null;
-document.addEventListener('touchstart', e => {
-  const card = e.target.closest('.product-card');
-  if (card) {
-    touchTimer = setTimeout(() => {
-      const id = card.querySelector('[onclick*="openPriceModal"]').getAttribute('onclick').match(/'([^']+)'/)[1];
-      openEditModal(id);
-    }, 600);
-  }
-});
-document.addEventListener('touchend', () => { if (touchTimer) clearTimeout(touchTimer); });
-document.addEventListener('touchmove', () => { if (touchTimer) clearTimeout(touchTimer); });
-
-// Seed data — pre-loaded items (only added once)
-const SEED_KEY = 'price-tracker-seeded-v1';
-function seedData() {
-  if (localStorage.getItem(SEED_KEY)) return;
-  const now = Date.now();
-  const seeds = [
-    { name: 'Brezze', category: 'Washing liquid', store: '7-11', unit: '1Litre', note: '', price: 62.77 },
-    { name: 'Kleenex', category: 'Tissue', store: 'Shopee', unit: '20ea', note: '', price: 223 },
-    { name: 'Scott', category: 'Tissue', store: 'Shopee', unit: '80ea', note: '', price: 464 },
-    { name: 'Shokubutsu', category: 'Shower Gel', store: 'Shopee', unit: '3ea', note: '', price: 109 },
-    { name: 'Gnite', category: 'Mg', store: 'Shopee', unit: '30ea', note: '', price: 147 },
-    { name: 'Singha Water Drinks', category: 'Water', store: 'Shopee', unit: '600ml 12ea', note: '', price: 35.1 },
-  ];
-  seeds.forEach((s, i) => {
-    const id = 'seed_' + i;
-    if (!products.find(p => p.id === id)) {
-      products.push({
-        id,
-        name: s.name,
-        category: s.category,
-        store: s.store,
-        unit: s.unit,
-        note: s.note,
-        createdAt: now - (seeds.length - i) * 1000,
-        updatedAt: now - (seeds.length - i) * 1000,
-        history: [{ price: s.price, date: now - (seeds.length - i) * 1000, note: 'ราคาเริ่มต้น' }]
-      });
-    }
-  });
-  save();
-  localStorage.setItem(SEED_KEY, '1');
-}
-
-// Init
-load();
-seedData();
-renderAll();
 </script>
 </body>
 </html>
